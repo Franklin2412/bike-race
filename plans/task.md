@@ -8,7 +8,7 @@
     - [x] Set up basic HTML/CSS structure <!-- id: 2 -->
 - [x] GitHub Pages Compatibility <!-- id: 18 -->
     - [x] Verify relative paths in `index.html` and `style.css` <!-- id: 22 -->
-    - [x] Add basic GitHub Action for deployment (optional but recommended) <!-- id: 23 -->
+    - [x] Add GitHub Action for automatic deployment <!-- id: 23 -->
     - [x] Ensure asset loading logic is relative-path friendly <!-- id: 24 -->
 - [x] Core Engine Development <!-- id: 3 -->
     - [x] Implement pseudo-3D road rendering (segments, curves, hills) <!-- id: 4 -->
