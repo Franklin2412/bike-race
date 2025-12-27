@@ -68,6 +68,7 @@ let health = 100;
 let score = 0;
 let trashSmashed = 0;
 let gameState = 'START';
+let keys = { left: false, right: false, up: false, down: false };
 
 // Road State
 let segments = [];
@@ -491,6 +492,12 @@ function renderSegment(ctx, width, lanes, x1, y1, w1, x2, y2, w2, fog, color) {
     ctx.globalAlpha = 1.0;
 }
 
+function resize() {
+    canvas.width = WIDTH;
+    canvas.height = HEIGHT;
+}
+window.addEventListener('resize', resize);
+
 function frame() {
     update(STEP);
     render();
@@ -500,5 +507,6 @@ function frame() {
 // Start game only when images are loaded
 loadImages(() => {
     resize();
+    resetRoad();
     render();
 });
