@@ -371,13 +371,18 @@ function update(dt) {
             } else {
                 // Obstacle hit - Penalty!
                 if (speed > 500) { // Only penalize if moving fast enough
-                    speed = 500; // Just slow down, don't push back
+                    speed = 200; // Slow down even more on hit
                     health -= 10;
-                    if (health <= 0) gameOver();
+                    // Removed: if (health <= 0) gameOver();
                 }
             }
             break;
         }
+    }
+
+    // Check for Finish Line
+    if (position >= trackLength - SEGMENT_LENGTH * 2) {
+        gameOver(true); // Victory!
     }
 
     // Score based on distance/speed
@@ -396,10 +401,14 @@ function update(dt) {
     document.getElementById('trash').innerText = trashSmashed;
 }
 
-function gameOver() {
+function gameOver(victory) {
     gameState = 'GAME_OVER';
     document.getElementById('game-over').style.display = 'flex';
-    document.getElementById('final-stats').innerText = `You smashed ${trashSmashed} trash bags and scored ${score} points!`;
+    let title = victory ? "RACE FINISHED!" : "GAME OVER";
+    document.getElementById('game-over').querySelector('h1').innerText = title;
+    document.getElementById('final-stats').innerText = victory
+        ? `You reached the goal! You smashed ${trashSmashed} trash bags and scored ${score} points!`
+        : `You smashed ${trashSmashed} trash bags and scored ${score} points!`;
 }
 
 function render() {
