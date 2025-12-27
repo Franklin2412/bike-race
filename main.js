@@ -343,17 +343,16 @@ function update(dt) {
         speed = Math.max(speed + offRoadDecel * dt, offRoadLimit);
 
     // Update Sprites (Movement & Animation)
-    for (let n = 0; n < segments.length; n++) {
-        let seg = segments[n];
+    // Only update segments within draw distance of the player
+    let baseIndex = findSegment(position).index;
+    for (let n = 0; n < DRAW_DISTANCE; n++) {
+        let seg = segments[(baseIndex + n) % segments.length];
         for (let i = 0; i < seg.sprites.length; i++) {
             let s = seg.sprites[i];
-            if (s.source.speed) {
-                // Moving car logic: just move forward in segments
-                // Simplified: we'll just let them be for now or move them slowly
-                // Actually let's move them relative to world z
-            }
             if (s.source.walking) {
-                s.offset += Math.sin(position / 500) * 0.02; // Simple walking effect
+                // Fixed oscillation instead of cumulative movement
+                s.offset = (s.baseOffset || s.offset) + (Math.sin(position / 500) * 0.5);
+                if (!s.baseOffset) s.baseOffset = s.offset;
             }
         }
     }
@@ -361,7 +360,7 @@ function update(dt) {
     // Collision Detection
     for (let i = 0; i < playerSegment.sprites.length; i++) {
         let sprite = playerSegment.sprites[i];
-        let spriteW = sprite.source.w / 500; // Adjust for collision box
+        let spriteW = sprite.source.w / 1000; // Refined collision box
         if (Math.abs(playerX - sprite.offset) < spriteW) {
             if (sprite.source.collectible) {
                 // Trash hit - Bonus!
@@ -370,10 +369,11 @@ function update(dt) {
                 playerSegment.sprites.splice(i, 1); // Remove trash bag
             } else {
                 // Obstacle hit - Penalty!
-                speed = 200;
-                health -= 10;
-                position -= 50; // Bump back
-                if (health <= 0) gameOver();
+                if (speed > 500) { // Only penalize if moving fast enough
+                    speed = 500; // Just slow down, don't push back
+                    health -= 10;
+                    if (health <= 0) gameOver();
+                }
             }
             break;
         }
