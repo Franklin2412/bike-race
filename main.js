@@ -330,13 +330,14 @@ function update(dt) {
         speed = Math.max(speed + decel * dt, 0);
 
     // Update Player X (Steering)
+    let steerFactor = Math.max(speedPercent, 0.3);
     if (keys.left)
-        playerX = playerX - (dt * 3 * speedPercent);
+        playerX = playerX - (dt * 4 * steerFactor);
     else if (keys.right)
-        playerX = playerX + (dt * 3 * speedPercent);
+        playerX = playerX + (dt * 4 * steerFactor);
 
-    // Handle curves
-    playerX = playerX - (dt * 3 * speedPercent * playerSegment.curve);
+    // Handle centrifugal force in curves
+    playerX = playerX - (dt * 2 * speedPercent * playerSegment.curve);
 
     // Off-road penalty
     if (((playerX < -1) || (playerX > 1)) && (speed > offRoadLimit))
@@ -382,8 +383,8 @@ function update(dt) {
     // Score based on distance/speed
     score += Math.round(speed / 100);
 
-    // Update Background Offset
-    skyOffset = skyOffset - (playerSegment.curve * speedPercent * 0.01);
+    // Update Background Offset (Parallax)
+    skyOffset = skyOffset - (playerSegment.curve * speedPercent * 0.05);
 
     // Clamp playerX
     playerX = Math.max(-3, Math.min(3, playerX));
