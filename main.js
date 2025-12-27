@@ -18,13 +18,13 @@ const CAMERA_DEPTH = 1 / Math.tan((FIELD_OF_VIEW / 2) * Math.PI / 180);
 const DRAW_DISTANCE = 300;
 const FOG_DENSITY = 5;
 
-// Colors
+// Neon/Cyberpunk Colors
 const COLORS = {
-    SKY: '#72D7EE',
+    SKY: '#1a0033',
     TREE: '#005108',
-    FOG: '#005108',
-    LIGHT: { road: '#6B6B6B', grass: '#10AA10', rumble: '#555555', lane: '#CCCCCC' },
-    DARK: { road: '#696969', grass: '#009A00', rumble: '#BBBBBB' },
+    FOG: '#1a0033',
+    LIGHT: { road: '#222222', grass: '#1a0033', rumble: '#00ccff', lane: '#00ccff' },
+    DARK: { road: '#1a1a1a', grass: '#1a0033', rumble: '#ff0055' },
     START: { road: 'white', grass: 'white', rumble: 'white' },
     FINISH: { road: 'black', grass: 'black', rumble: 'black' }
 };
@@ -38,9 +38,11 @@ const BACKGROUND = {
 
 // Assets
 const IMAGES = {
-    background: { src: 'images/background.png', img: null },
+    background_sky: { src: 'images/background_city.png', img: null },
+    background_mountains: { src: 'images/background_mountains.png', img: null },
     bike: { src: 'images/bike.png', img: null },
-    obstacles: { src: 'images/obstacles.png', img: null }
+    obstacles: { src: 'images/obstacles.png', img: null },
+    decorations: { src: 'images/decorations.png', img: null }
 };
 
 function loadImages(onComplete) {
@@ -153,13 +155,13 @@ function renderSprite(ctx, width, height, resolution, roadWidth, sprite, scale, 
         ctx.drawImage(sprite.img, sprite.x, sprite.y, sprite.w, sprite.h - (sprite.h * clipH / destH), destX, destY, destW, destH - clipH);
 }
 
-// Background rendering
+// Multi-layer Background rendering
 function renderBackground(ctx, background, width, height, rotation, offset) {
     rotation = rotation || 0;
     offset = offset || 0;
 
     let image = background.img;
-    let sw = image.width / 4;
+    let sw = image.width;
     let sh = image.height;
     let dw = width;
     let dh = height;
@@ -225,14 +227,19 @@ function easeInOut(a, b, percent) { return a + (b - a) * ((-Math.cos(percent * M
 
 // Constants for sprites (based on generated assets)
 const SPRITES = {
-    TRASH: { x: 420, y: 450, w: 200, h: 180 }, // Approximate coordinates from obstacle_sprites
-    CAR: { x: 60, y: 400, w: 300, h: 200 },
-    PERSON: { x: 780, y: 370, w: 150, h: 260 },
+    TRASH: { x: 420, y: 450, w: 200, h: 180, collectible: true }, // Approximate coordinates from obstacle_sprites
+    CAR: { x: 60, y: 400, w: 300, h: 200, speed: 5000 },
+    PERSON: { x: 780, y: 370, w: 150, h: 260, walking: true },
     BIKE_STRAIGHT: { x: 400, y: 340, w: 220, h: 350 },
     BIKE_LEFT: { x: 200, y: 340, w: 220, h: 350 },
     BIKE_HARD_LEFT: { x: 0, y: 340, w: 220, h: 350 },
     BIKE_RIGHT: { x: 600, y: 340, w: 220, h: 350 },
-    BIKE_HARD_RIGHT: { x: 800, y: 340, w: 220, h: 350 }
+    BIKE_HARD_RIGHT: { x: 800, y: 340, w: 220, h: 350 },
+
+    // New Decorations (approximate based on generated spritesheet)
+    PALM: { x: 20, y: 20, w: 110, h: 220 },
+    BILLBOARD: { x: 450, y: 35, w: 170, h: 105 },
+    LAMP: { x: 500, y: 530, w: 100, h: 200 }
 };
 
 // Reset Road
@@ -256,12 +263,23 @@ function resetRoad() {
     addHill(100, 40);
     addStraight(100);
 
-    // Add random obstacles
-    for (let n = 20; n < segments.length - 100; n += 10) {
+    // Add random obstacles and decorations
+    for (let n = 20; n < segments.length - 100; n += 5) {
         let type = Math.random();
-        if (type < 0.4) addSprite(n, { img: IMAGES.obstacles.img, ...SPRITES.TRASH }, Math.random() * 2 - 1);
-        else if (type < 0.7) addSprite(n, { img: IMAGES.obstacles.img, ...SPRITES.CAR }, Math.random() < 0.5 ? 0.6 : -0.6);
-        else if (type < 0.9) addSprite(n, { img: IMAGES.obstacles.img, ...SPRITES.PERSON }, Math.random() < 0.5 ? 1.1 : -1.1);
+        if (n % 10 === 0) {
+            // Roadside decorations
+            addSprite(n, { img: IMAGES.decorations.img, ...SPRITES.PALM }, -1.5);
+            addSprite(n, { img: IMAGES.decorations.img, ...SPRITES.LAMP }, 1.5);
+        }
+        if (n % 50 === 0) {
+            addSprite(n, { img: IMAGES.decorations.img, ...SPRITES.BILLBOARD }, Math.random() < 0.5 ? 2 : -2);
+        }
+
+        if (n % 10 === 0) {
+            if (type < 0.3) addSprite(n, { img: IMAGES.obstacles.img, ...SPRITES.TRASH }, Math.random() * 2 - 1);
+            else if (type < 0.6) addSprite(n, { img: IMAGES.obstacles.img, ...SPRITES.CAR }, Math.random() < 0.5 ? 0.6 : -0.6);
+            else if (type < 0.8) addSprite(n, { img: IMAGES.obstacles.img, ...SPRITES.PERSON }, Math.random() < 0.5 ? 1.1 : -1.1);
+        }
     }
 
     segments[findSegment(playerX).index + 2].color = COLORS.START;
@@ -423,8 +441,9 @@ function render() {
 
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-    // Draw Background
-    renderBackground(ctx, IMAGES.background, WIDTH, HEIGHT, 0, skyOffset);
+    // Draw Multi-layer Parallax Background
+    renderBackground(ctx, IMAGES.background_sky, WIDTH, HEIGHT, 0, skyOffset);
+    renderBackground(ctx, IMAGES.background_mountains, WIDTH, HEIGHT, 0, skyOffset * 2);
 
     // Draw Road Segments
     for (let n = 0; n < DRAW_DISTANCE; n++) {
