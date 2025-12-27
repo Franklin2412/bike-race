@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Road Rash - Trash Mode</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div id="ui-overlay">
+            <div id="hud">
+                <div class="stat">Health: <span id="health">100</span>%</div>
+                <div class="stat">Score: <span id="score">0</span></div>
+                <div class="stat">Trash: <span id="trash">0</span></div>
+                <div class="stat">Speed: <span id="speed">0</span> mph</div>
+            </div>
+            <div id="start-screen" class="overlay">
+                <h1>ROAD RASH</h1>
+                <p>TRASH MODE</p>
+                <button id="start-btn">START RACE</button>
+                <div class="controls-hint">
+                    Use Arrow Keys to Drive
+                </div>
+            </div>
+            <div id="game-over" class="overlay" style="display: none;">
+                <h1>GAME OVER</h1>
+                <p id="final-stats">You smashed 0 trash bags!</p>
+                <button id="restart-btn">TRY AGAIN</button>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+
+</html>

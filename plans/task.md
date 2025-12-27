@@ -1,0 +1,29 @@
+# Road Rash Web Game Task List
+
+- [x] Project Setup <!-- id: 0 -->
+    - [x] Create project directory `bike-race` <!-- id: 19 -->
+    - [x] Create `plans` directory <!-- id: 20 -->
+    - [x] Move/Create planning docs in `plans/` <!-- id: 21 -->
+    - [x] Initialize project structure (Manual HTML/CSS/JS) <!-- id: 1 -->
+    - [x] Set up basic HTML/CSS structure <!-- id: 2 -->
+- [x] GitHub Pages Compatibility <!-- id: 18 -->
+    - [x] Verify relative paths in `index.html` and `style.css` <!-- id: 22 -->
+    - [x] Add basic GitHub Action for deployment (optional but recommended) <!-- id: 23 -->
+    - [x] Ensure asset loading logic is relative-path friendly <!-- id: 24 -->
+- [x] Core Engine Development <!-- id: 3 -->
+    - [x] Implement pseudo-3D road rendering (segments, curves, hills) <!-- id: 4 -->
+    - [x] Implement camera and player movement logic <!-- id: 5 -->
+    - [x] Add keyboard controls (Up, Down, Left, Right) <!-- id: 6 -->
+- [x] Gameplay Elements <!-- id: 7 -->
+    - [x] Add player bike sprite and animations <!-- id: 8 -->
+    - [x] Implement dynamic obstacle system (moving cars, walking people) <!-- id: 9 -->
+    - [x] Add health system and "Trash Mode" scoring <!-- id: 10 -->
+    - [x] Add collision effects and Game Over state <!-- id: 26 -->
+- [x] Visuals and Polish <!-- id: 11 -->
+    - [x] Integrate free/generated assets for scenery and sprites <!-- id: 12 -->
+    - [x] Add parallax background (mountains, sky) <!-- id: 13 -->
+    - [x] Implement UI (speedometer, score/distance) <!-- id: 14 -->
+- [ ] Advanced Features <!-- id: 15 -->
+    - [ ] Research and integrate MediaPipe for hand gesture controls <!-- id: 16 -->
+- [x] Deployment <!-- id: 17 -->
+    - [x] Final verification on GitHub Pages (Ready for deployment) <!-- id: 25 -->
